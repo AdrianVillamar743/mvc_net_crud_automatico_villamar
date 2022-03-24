@@ -1,0 +1,113 @@
+﻿using System;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
+
+#nullable disable
+
+namespace crudRelacionalMVC.Models
+{
+    public partial class BibliotecasContext : DbContext
+    {
+        public BibliotecasContext()
+        {
+        }
+
+        public BibliotecasContext(DbContextOptions<BibliotecasContext> options)
+            : base(options)
+        {
+        }
+
+        public virtual DbSet<Biblioteca> Bibliotecas { get; set; }
+        public virtual DbSet<Bibliotecarium> Bibliotecaria { get; set; }
+        public virtual DbSet<Libro> Libros { get; set; }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+   //#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+                optionsBuilder.UseSqlServer("Data source=LAPTOP-M2BTP9V4; Initial Catalog=Bibliotecas; user id=adrian password=villamar;Trusted_Connection=True;");
+            }
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Biblioteca>(entity =>
+            {
+                entity.HasKey(e => e.IdBiblioteca)
+                    .HasName("PK__bibliote__1EEBBDFE38AAB437");
+
+                entity.ToTable("biblioteca");
+
+                entity.Property(e => e.IdBiblioteca).HasColumnName("id_biblioteca");
+
+                entity.Property(e => e.Direccion)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("direccion");
+
+                entity.Property(e => e.Nombre)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("nombre");
+            });
+
+            modelBuilder.Entity<Bibliotecarium>(entity =>
+            {
+                entity.HasKey(e => e.IdBibliotecaria)
+                    .HasName("PK__bibliote__62F27BDCDFACD455");
+
+                entity.ToTable("bibliotecaria");
+
+                entity.Property(e => e.IdBibliotecaria).HasColumnName("id_bibliotecaria");
+
+                entity.Property(e => e.Apellido)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("apellido");
+
+                entity.Property(e => e.IdBiblioteca).HasColumnName("id_biblioteca");
+
+                entity.Property(e => e.Nombre)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("nombre");
+
+                entity.HasOne(d => d.IdBibliotecaNavigation)
+                    .WithMany(p => p.Bibliotecaria)
+                    .HasForeignKey(d => d.IdBiblioteca)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("fk_bibliotecaria_biblioteca");
+            });
+
+            modelBuilder.Entity<Libro>(entity =>
+            {
+                entity.ToTable("libro");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Descripcion)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("descripcion");
+
+                entity.Property(e => e.IdBibliotecaria).HasColumnName("id_bibliotecaria");
+
+                entity.Property(e => e.Nombre)
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("nombre");
+
+                entity.HasOne(d => d.IdBibliotecariaNavigation)
+                    .WithMany(p => p.Libros)
+                    .HasForeignKey(d => d.IdBibliotecaria)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("fk_libro_bibliotecaria");
+            });
+
+            OnModelCreatingPartial(modelBuilder);
+        }
+
+        partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+    }
+}
