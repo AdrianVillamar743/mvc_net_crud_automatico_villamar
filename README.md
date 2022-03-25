@@ -34,7 +34,7 @@ illamar;Trusted_Connection=True;
 
   "ConnectionStrings": {
     "DefaultConnection": "Data source=LAPTOP-M2BTP9V4; Initial Catalog=Bibliotecas; user id=adrian password=
-illamar;Trusted_Connection=True;"
+villamar;Trusted_Connection=True;"
   },
 
 10.- Nos dirigiremos al archivo Startup.cs para poder realizar la inyección de dependencias para poder contar con la conexión en todo el archivo.
